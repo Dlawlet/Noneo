@@ -1,103 +1,104 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useEffect } from 'react';
+import { Navigation } from '@/components/ui/Navigation';
+import { Background } from '@/components/layout/Background';
+import { Header } from '@/components/ui/Header';
+import { Footer } from '@/components/ui/Footer';
+import { Calendar } from '@/components/calendar/Calendar';
+import { StaysList } from '@/components/stays/StaysList';
+import { useTheme } from '@/hooks/useTheme';
+import { useStays } from '@/hooks/useStays';
+import { useDateSelection } from '@/hooks/useDateSelection';
+import { calculateRemainingDaysForDate } from '@/utils/calculations';
+import { calculateDayInUse } from '@/utils/calculations';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { isDarkMode, toggleDarkMode } = useTheme();
+  const { stays, addStay, removeStay, updateStay } = useStays();
+  const { 
+    currentStart, 
+    currentEnd, 
+    stayTitle, 
+    setStayTitle,
+    editingStay,
+    handleDateClick,
+    startEdit,
+    cancelEdit,
+    clearSelection
+  } = useDateSelection(stays);
+  
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [varDay, setVarDay] = useState(90);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const remainingDays = calculateRemainingDaysForDate(new Date(), stays, false) - calculateDayInUse(new Date(), stays)  ;
+    setVarDay(remainingDays);
+  }, [stays]);
+
+  const changeMonth = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(newDate.getMonth() - 1);
+      } else {
+        newDate.setMonth(newDate.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const CircularBmcButton = () => (
+    <a href="https://www.buymeacoffee.com/bigrooms" target="_blank" rel="noopener noreferrer">
+      <img 
+        src="./bmc-logo-yellow.png"
+        alt="Buy Me A Coffee" 
+        //cicular styling
+        className="rounded-full shadow-lg hover:shadow-xl transition-all hover:transform hover:-translate-y-1"
+        style={{ height: "60px", width: "60px" }}
+        //cicular styling
+      />
+    </a>
+  );
+
+  return (
+    <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${
+      isDarkMode
+        ? "bg-gradient-to-br from-black via-yellow-900 to-orange-900"
+        : "bg-gradient-to-br from-white via-orange-50 to-yellow-100"
+    }`}>
+      <Background isDarkMode={isDarkMode} />
+      <Navigation isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      <Header isDarkMode={isDarkMode} varDay={varDay} day_inuse={calculateDayInUse(new Date(), stays)} />
+
+      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <Calendar
+          currentDate={currentDate}
+          onDateClick={handleDateClick}
+          onMonthChange={changeMonth}
+          dateSelection={{ currentStart, currentEnd, stayTitle }}
+          stays={stays}
+          isDarkMode={isDarkMode}
+          editingStay={editingStay}
+          onStayTitleChange={setStayTitle}
+          onAddStay={addStay}
+          onUpdateStay={updateStay}
+          onClearSelection={clearSelection}
+          onCancelEdit={cancelEdit}
+        />
+        
+        <StaysList
+          stays={stays}
+          isDarkMode={isDarkMode}
+          onRemoveStay={removeStay}
+          onEditStay={startEdit}
+        />
+
+        <div className="flex justify-end mb-10 mt-10">
+                  <CircularBmcButton />
         </div>
+
+        <Footer isDarkMode={isDarkMode} />
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
