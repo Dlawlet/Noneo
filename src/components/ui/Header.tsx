@@ -34,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({ isDarkMode, varDay, day_inuse}) 
             <span className={`block mt-2 text-lg sm:text-xl ${
               isDarkMode ? "text-gray-300" : "text-gray-700"
             }`}>
-              Jours en cours d'utilisation : {day_inuse}
+              Jours en cours d&apos;utilisation : {day_inuse}
             </span>
           )}
         </h4>

@@ -49,13 +49,11 @@ export default function Home() {
 
   const CircularBmcButton = () => (
     <a href="https://www.buymeacoffee.com/bigrooms" target="_blank" rel="noopener noreferrer">
-      <img 
+      <img
         src="./bmc-logo-yellow.png"
         alt="Buy Me A Coffee" 
-        //cicular styling
         className="rounded-full shadow-lg hover:shadow-xl transition-all hover:transform hover:-translate-y-1"
         style={{ height: "60px", width: "60px" }}
-        //cicular styling
       />
     </a>
   );

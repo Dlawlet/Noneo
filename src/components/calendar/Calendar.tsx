@@ -51,7 +51,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       const remainingDaysForStart = calculateRemainingDaysForDate(startDate, stays);
       
       if (newStayDays > remainingDaysForStart) {
-        alert(`Impossible d'ajouter ce séjour : cela dépasserait vos ${remainingDaysForStart} jours restants pour cette période. Le séjour sélectionné fait ${newStayDays} jours.`);
+        alert(`Impossible d&apos;ajouter ce séjour : cela dépasserait vos ${remainingDaysForStart} jours restants pour cette période. Le séjour sélectionné fait ${newStayDays} jours.`);
         return;
       }
       
