@@ -46,12 +46,11 @@ export const isDateClickable = (
   if (currentStart) {
     const startDate = new Date(currentStart);
     startDate.setHours(12, 0, 0, 0);
-    const remainingDaysForStart = calculateRemainingDaysForDate(startDate, stays);
-    
-    const maxDate = new Date(startDate);
-    maxDate.setDate(startDate.getDate() + remainingDaysForStart -1);
-    
-    return dateObj >= startDate && dateObj <= maxDate;
+    const tempstays: Stay[] = [...stays, { start: startDate.toISOString(), end: new Date(dateObj.getTime() - 24 * 60 * 60 * 1000).toISOString(), id: 'temp' }]; // Add a temporary stay to check the date
+    if (calculateRemainingDaysForDate(dateObj, tempstays) > 0 && dateObj >= startDate) {
+      return true;
+    }
+    return false;
   }
   
   const maxReservedDate = stays.reduce((maxDate, stay) => {
@@ -63,7 +62,7 @@ export const isDateClickable = (
   if (calculateRemainingDaysForDate(maxReservedDate, stays) <= 0) {
     const remainingDays = calculateRemainingDaysForDate(dateObj, stays);
     return remainingDays > 0;
-  }
+  } 
   
   return true;
 };

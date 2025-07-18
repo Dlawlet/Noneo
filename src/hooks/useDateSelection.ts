@@ -38,10 +38,6 @@ export const useDateSelection = (stays: Stay[]) => {
   };
 
   const handleDateClick = (date: string) => {
-    if (!isDateClickable(date)) {
-      return;
-    }
-
     const clickedDate = new Date(date);
     clickedDate.setHours(12, 0, 0, 0);
 
@@ -60,6 +56,9 @@ export const useDateSelection = (stays: Stay[]) => {
         setCurrentStart("");
         setCurrentEnd("");
       }
+    }
+    if (isDateClickable(date)) {
+      return true;
     }
   };
 

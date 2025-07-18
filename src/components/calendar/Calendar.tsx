@@ -51,8 +51,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       const remainingDaysForStart = calculateRemainingDaysForDate(startDate, stays);
       
       if (newStayDays > remainingDaysForStart) {
-        alert(`Impossible d&apos;ajouter ce séjour : cela dépasserait vos ${remainingDaysForStart} jours restants pour cette période. Le séjour sélectionné fait ${newStayDays} jours.`);
-        return;
+        alert(`Attention: Séjour Valide car 180 jours glissants, Mais les ${newStayDays - remainingDaysForStart} derniers jours du séjour ne seront pas encore disponible au début du séjour.`);
       }
       
       const newStay: Stay = {

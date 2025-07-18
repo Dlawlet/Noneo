@@ -33,8 +33,6 @@ export const StayForm: React.FC<StayFormProps> = ({
   const { currentStart, currentEnd, stayTitle } = dateSelection;
 
   const isFormValid = currentStart && currentEnd;
-  const exceedsQuota = isFormValid && calculateDaysBetween(currentStart, currentEnd) > 
-    calculateRemainingDaysForDate(new Date(currentStart), stays);
 
   return (
     <div className="mb-6 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -76,9 +74,7 @@ export const StayForm: React.FC<StayFormProps> = ({
           {isFormValid && (
             <div className="text-sm">
               <span className="font-medium text-gray-700 dark:text-gray-300">Durée :</span>
-              <span className={`ml-2 font-bold block sm:inline ${
-                exceedsQuota ? 'text-red-500' : 'text-green-600 dark:text-green-400'
-              }`}>
+              <span className={`ml-2 font-bold block sm:inline text-green-600 dark:text-green-400`}>
                 {calculateDaysBetween(currentStart, currentEnd)} jours
               </span>
             </div>
@@ -102,14 +98,6 @@ export const StayForm: React.FC<StayFormProps> = ({
         </div>
       </div>
       
-      {exceedsQuota && (
-        <div className="mt-3 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-          <p className="text-sm text-red-600 dark:text-red-400">
-            ⚠️ Séjour sélectionné ({calculateDaysBetween(currentStart, currentEnd)} jours) dépasse vos jours restants pour cette date de début ({calculateRemainingDaysForDate(new Date(currentStart), stays)} jours).
-          </p>
-        </div>
-      )}
-      
       <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 space-y-1">
         <p>💡 Cliquez sur une date pour sélectionner le début, puis sur une autre date pour la fin.</p>
         <p>📅 Une fois le début sélectionné, seules les dates dans la limite du quota restant sont cliquables.</p>
@@ -120,7 +108,7 @@ export const StayForm: React.FC<StayFormProps> = ({
       <div className="flex justify-center mt-4">
         <button
           onClick={editingStay ? onUpdateStay : onAddStay}
-          disabled={!isFormValid || !!exceedsQuota}
+          disabled={!isFormValid }
           className={`relative group px-6 sm:px-8 py-3 sm:py-4 font-bold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${
             isDarkMode
               ? "bg-gradient-to-r from-orange-400 to-yellow-400 hover:from-orange-500 hover:to-yellow-500 text-black"
